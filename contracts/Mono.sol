@@ -5,11 +5,19 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Mono is IERC20 {
+    address public creator;
+
     uint256 public override totalSupply = 1000000;
+
     mapping(address => uint256) public override balanceOf;
     mapping(address => mapping(address => uint256)) allowances;
 
     error InsufficientFunds(uint256 balance, uint256 amountToTransfer);
+
+    constructor() {
+        creator = msg.sender;
+        balanceOf[creator] = totalSupply;
+    }
 
     function transfer(address recipient, uint256 amount)
         external
@@ -20,8 +28,8 @@ contract Mono is IERC20 {
             revert InsufficientFunds(balanceOf[msg.sender], amount);
         }
 
-        payable(recipient).transfer(amount);
-
+        balanceOf[msg.sender] -= amount;
+        balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
         return true;
     }
@@ -64,7 +72,8 @@ contract Mono is IERC20 {
         );
 
         allowances[sender][recipient] -= amount;
-        payable(recipient).transfer(amount);
+        balanceOf[sender] -= amount;
+        balanceOf[recipient] += amount;
         emit Transfer(sender, recipient, amount);
         return true;
     }
