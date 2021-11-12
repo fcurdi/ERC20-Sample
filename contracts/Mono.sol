@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract Mono is IERC20 {
     address public creator;
 
-    uint256 public override totalSupply = 1000000;
+    uint256 public override totalSupply = 1_000_000;
 
     mapping(address => uint256) public override balanceOf;
     mapping(address => mapping(address => uint256)) allowances;
@@ -50,7 +50,7 @@ contract Mono is IERC20 {
     {
         address owner = msg.sender;
         require(
-            owner.balance < amount,
+            balanceOf[owner] >= amount,
             "Not enough funds to approve allowance"
         );
 
@@ -65,7 +65,7 @@ contract Mono is IERC20 {
         address recipient,
         uint256 amount
     ) external override returns (bool) {
-        require(sender.balance >= amount, "sender has not enough funds");
+        require(balanceOf[sender] >= amount, "sender has not enough funds");
         require(
             allowances[sender][recipient] >= amount,
             "not enough allowance"
