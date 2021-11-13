@@ -12,8 +12,6 @@ contract Mono is IERC20 {
     mapping(address => uint256) public override balanceOf;
     mapping(address => mapping(address => uint256)) allowances;
 
-    error InsufficientFunds(uint256 balance, uint256 amountToTransfer);
-
     constructor() {
         creator = msg.sender;
         balanceOf[creator] = totalSupply;
@@ -24,10 +22,7 @@ contract Mono is IERC20 {
         override
         returns (bool)
     {
-        if (balanceOf[msg.sender] < amount) {
-            revert InsufficientFunds(balanceOf[msg.sender], amount);
-        }
-
+        require(balanceOf[msg.sender] >= amount, "Insufficient funds");
         balanceOf[msg.sender] -= amount;
         balanceOf[recipient] += amount;
         emit Transfer(msg.sender, recipient, amount);
