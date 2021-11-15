@@ -15,7 +15,10 @@ describe("Mono token", () => {
   });
 
   describe("Deployment", () => {
-    it("Should configure correctly total supply of tokens", async () => {
+    it("Should configure correctly name, symbol, decimals and total supply of tokens", async () => {
+      expect(await contract.name()).to.equal("Mono");
+      expect(await contract.symbol()).to.equal("MON");
+      expect(await contract.decimals()).to.equal(18);
       expect(await contract.totalSupply()).to.equal(totalSupply);
     });
     it("Should assing owner with the total supply of tokens", async () => {

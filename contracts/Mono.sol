@@ -3,11 +3,18 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-contract Mono is IERC20 {
+contract Mono is IERC20, IERC20Metadata {
     address public creator;
 
     uint256 public override totalSupply = 1_000_000;
+
+    string public override name = "Mono";
+
+    string public override symbol = "MON";
+
+    uint8 public override decimals = 18;
 
     mapping(address => uint256) public override balanceOf;
     mapping(address => mapping(address => uint256)) allowances;
