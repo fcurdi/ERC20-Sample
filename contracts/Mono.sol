@@ -21,7 +21,7 @@ contract Mono is IERC20, IERC20Metadata {
 
     constructor() {
         creator = msg.sender;
-        balanceOf[creator] = totalSupply;
+        _mint();
     }
 
     function transfer(address recipient, uint256 amount)
@@ -70,5 +70,10 @@ contract Mono is IERC20, IERC20Metadata {
         balanceOf[recipient] += amount;
         emit Transfer(sender, recipient, amount);
         return true;
+    }
+
+    function _mint() private {
+        balanceOf[creator] = totalSupply;
+        emit Transfer(address(0x0), creator, totalSupply);
     }
 }

@@ -2,13 +2,19 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Mono token", () => {
-  let contract, ownerAccount, secondAccount, thirdAccount, secondSigner;
+  let contract,
+    ownerAccount,
+    secondAccount,
+    thirdAccount,
+    secondSigner,
+    deploymentReceipt;
   const totalSupply = 1_000_000;
 
   beforeEach(async () => {
     const Mono = await ethers.getContractFactory("Mono");
     contract = await Mono.deploy();
     await contract.deployed();
+    deploymentReceipt = contract.deployTransaction;
     [firstSigner, secondSigner, thirdSigner, _] = await ethers.getSigners();
     ownerAccount = firstSigner.address;
     secondAccount = secondSigner.address;
@@ -25,6 +31,9 @@ describe("Mono token", () => {
     it("Should assing owner with the total supply of tokens", async () => {
       expect(await contract.creator()).to.equal(ownerAccount);
       expect(await contract.balanceOf(ownerAccount)).to.equal(totalSupply);
+      await expect(deploymentReceipt)
+        .to.emit(contract, "Transfer")
+        .withArgs(ethers.constants.AddressZero, ownerAccount, totalSupply);
     });
   });
   describe("Transfer", () => {
