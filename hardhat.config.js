@@ -9,10 +9,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-const ROPSTEN_URL = process.env.INFURA_ROPSTEN_URL;
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const ROPSTEN_URL = process.env.INFURA_ROPSTEN_URL || "";
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 
 module.exports = {
+  defaultNetwork: "hardhat",
   solidity: "0.8.4",
   networks: {
     ropsten: {
