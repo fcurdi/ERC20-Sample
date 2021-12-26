@@ -14,7 +14,7 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 
 module.exports = {
   defaultNetwork: "hardhat",
-  solidity: "0.8.4",
+  solidity: "0.8.10",
   networks: {
     ropsten: {
       url: ROPSTEN_URL,

@@ -8,7 +8,7 @@ describe("Mono token", () => {
     thirdAccount,
     secondSigner,
     deploymentReceipt;
-  const totalSupply = 1_000_000;
+  const totalSupply = 100_000;
 
   beforeEach(async () => {
     const Mono = await ethers.getContractFactory("Mono");
@@ -25,7 +25,7 @@ describe("Mono token", () => {
     it("Should configure correctly name, symbol, decimals and total supply of tokens", async () => {
       expect(await contract.name()).to.equal("Mono");
       expect(await contract.symbol()).to.equal("MON");
-      expect(await contract.decimals()).to.equal(18);
+      expect(await contract.decimals()).to.equal(2);
       expect(await contract.totalSupply()).to.equal(totalSupply);
     });
     it("Should assing owner with the total supply of tokens", async () => {
@@ -84,16 +84,19 @@ describe("Mono token", () => {
 
   describe("TransferFrom", () => {
     it("Should not transfer when amount is greater than balance", async () => {
+      await contract.approve(secondAccount, totalSupply + 1);
       await expect(
-        contract.transferFrom(ownerAccount, secondAccount, totalSupply + 1)
-      ).to.be.revertedWith("sender has not enough funds");
-      expect(await contract.balanceOf(secondAccount)).to.equal(0);
+        contract
+        .connect(secondSigner) // secondAccount
+        .transferFrom(ownerAccount, thirdAccount, totalSupply + 1)
+      ).to.be.revertedWith("Insufficient funds");
+      expect(await contract.balanceOf(thirdAccount)).to.equal(0);
       expect(await contract.balanceOf(ownerAccount)).to.equal(totalSupply);
     });
     it("Should not transfer when there is no allowance", async () => {
       await expect(
         contract.transferFrom(ownerAccount, secondAccount, 1)
-      ).to.be.revertedWith("not enough allowance");
+      ).to.be.revertedWith("Not enough allowance");
       expect(await contract.balanceOf(secondAccount)).to.equal(0);
       expect(await contract.balanceOf(ownerAccount)).to.equal(totalSupply);
     });
