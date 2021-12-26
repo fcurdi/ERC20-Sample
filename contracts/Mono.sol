@@ -12,9 +12,8 @@ contract Mono is IERC20, IERC20Metadata {
     string private _symbol;
     uint8 private _decimals;
     uint256 private _totalSupply;
-
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
+    mapping(address => uint256) private _balanceOf;
+    mapping(address => mapping(address => uint256)) private _allowance;
 
     constructor() {
         creator = msg.sender;
@@ -22,7 +21,7 @@ contract Mono is IERC20, IERC20Metadata {
         _symbol = "MON";
         _decimals = 2;
         _totalSupply = 1000 * (10**uint256(_decimals));
-        _mint();
+        mint();
     }
 
     function name() external view returns (string memory) {
@@ -41,8 +40,20 @@ contract Mono is IERC20, IERC20Metadata {
         return _totalSupply;
     }
 
+    function balanceOf(address account) external view returns (uint256) {
+        return _balanceOf[account];
+    }
+
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256)
+    {
+        return _allowance[owner][spender];
+    }
+
     function approve(address spender, uint256 amount) external returns (bool) {
-        allowance[msg.sender][spender] = amount;
+        _allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
     }
@@ -57,15 +68,15 @@ contract Mono is IERC20, IERC20Metadata {
         uint256 amount
     ) external returns (bool) {
         require(
-            allowance[sender][msg.sender] >= amount,
+            _allowance[sender][msg.sender] >= amount,
             "Not enough allowance"
         );
-        allowance[sender][msg.sender] -= amount;
+        _allowance[sender][msg.sender] -= amount;
         return _transfer(sender, recipient, amount);
     }
 
-    function _mint() private {
-        balanceOf[creator] = _totalSupply;
+    function mint() private {
+        _balanceOf[creator] = _totalSupply;
         emit Transfer(address(0x0), creator, _totalSupply);
     }
 
@@ -74,9 +85,9 @@ contract Mono is IERC20, IERC20Metadata {
         address recipient,
         uint256 amount
     ) private returns (bool) {
-        require(balanceOf[sender] >= amount, "Insufficient funds");
-        balanceOf[sender] -= amount;
-        balanceOf[recipient] += amount;
+        require(_balanceOf[sender] >= amount, "Insufficient funds");
+        _balanceOf[sender] -= amount;
+        _balanceOf[recipient] += amount;
         emit Transfer(sender, recipient, amount);
         return true;
     }

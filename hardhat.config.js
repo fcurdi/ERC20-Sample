@@ -9,8 +9,16 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-const ROPSTEN_URL = process.env.INFURA_ROPSTEN_URL || "";
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+const ROPSTEN_URL = process.env.INFURA_ROPSTEN_URL;
+const accounts = [
+  process.env.METAMASK_PK_1,
+  process.env.METAMASK_PK_2,
+  process.env.METAMASK_PK_3,
+  process.env.METAMASK_PK_4,
+  process.env.METAMASK_PK_5,
+  process.env.METAMASK_PK_6,
+  process.env.METAMASK_PK_7,
+];
 
 module.exports = {
   defaultNetwork: "hardhat",
@@ -18,7 +26,7 @@ module.exports = {
   networks: {
     ropsten: {
       url: ROPSTEN_URL,
-      accounts: [PRIVATE_KEY],
+      accounts,
     },
   },
 };
