@@ -41,8 +41,6 @@ describe("Mono token", () => {
       await expect(
         contract.transfer(secondAccount, totalSupply + 1)
       ).to.be.revertedWith("Insufficient funds");
-      expect(await contract.balanceOf(ownerAccount)).to.equal(totalSupply);
-      expect(await contract.balanceOf(secondAccount)).to.equal(0);
     });
     it("Should transfer correctly between two accounts", async () => {
       const amount = 1;
@@ -87,18 +85,14 @@ describe("Mono token", () => {
       await contract.approve(secondAccount, totalSupply + 1);
       await expect(
         contract
-        .connect(secondSigner) // secondAccount
-        .transferFrom(ownerAccount, thirdAccount, totalSupply + 1)
+          .connect(secondSigner) // secondAccount
+          .transferFrom(ownerAccount, thirdAccount, totalSupply + 1)
       ).to.be.revertedWith("Insufficient funds");
-      expect(await contract.balanceOf(thirdAccount)).to.equal(0);
-      expect(await contract.balanceOf(ownerAccount)).to.equal(totalSupply);
     });
     it("Should not transfer when there is no allowance", async () => {
       await expect(
         contract.transferFrom(ownerAccount, secondAccount, 1)
       ).to.be.revertedWith("Not enough allowance");
-      expect(await contract.balanceOf(secondAccount)).to.equal(0);
-      expect(await contract.balanceOf(ownerAccount)).to.equal(totalSupply);
     });
     it("Should transfer correctly some allowance", async () => {
       const amount = 1;
